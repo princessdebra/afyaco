@@ -1,0 +1,58 @@
+name: afyaco_backend
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: afyaco_backend_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: afyaco
+      POSTGRES_PASSWORD: afyaco
+      POSTGRES_DB: afyaco
+    ports:
+      - "5440:5432"
+    volumes:
+      - afyaco_backend_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U afyaco"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: afyaco_backend_api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Overrides the host-facing value in .env — inside the compose network
+      # the app reaches Postgres via the service name, not localhost:5440.
+      DATABASE_URL: postgresql+psycopg://afyaco:afyaco@db:5432/afyaco
+    # Lets the container reach Ollama running on the devserver host itself
+    # (app/services/translation.py) — host.docker.internal isn't automatic
+    # on Linux like it is on Docker Desktop.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:8200:8200"
+    volumes:
+      # InsightFace downloads the buffalo_l model pack (~280MB) to this path
+      # on first use — persist it so a container rebuild doesn't re-download.
+      - afyaco_backend_insightface_cache:/root/.insightface
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ../frontend
+    container_name: afyaco_frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8300:80"
+    depends_on:
+      - app
+
+volumes:
+  afyaco_backend_pg_data:
+  afyaco_backend_insightface_cache:

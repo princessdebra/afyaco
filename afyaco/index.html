@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Afyaco — Connected Medical Operations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Temporary on-screen error reporter — a blank white page with no
+      // visible error is undiagnosable from the devserver side. If anything
+      // throws before React mounts, or nothing mounts within 4s, show it
+      // directly in the page instead of staying blank. Remove once mobile
+      // rendering is confirmed working.
+      (function () {
+        function show(text) {
+          var root = document.getElementById('root');
+          if (root && !root.hasChildNodes()) {
+            root.innerHTML = '<pre style="white-space:pre-wrap;padding:16px;font:12px monospace;color:#b00;background:#fff3f3;">' +
+              String(text).replace(/</g, '&lt;') + '</pre>';
+          }
+        }
+        window.addEventListener('error', function (e) {
+          show('JS error: ' + (e.message || e.error) + '\n' + (e.filename || '') + ':' + (e.lineno || '') + '\n' + (e.error && e.error.stack || ''));
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+          show('Unhandled promise rejection: ' + (e.reason && (e.reason.stack || e.reason.message || e.reason)));
+        });
+        setTimeout(function () {
+          var root = document.getElementById('root');
+          if (root && !root.hasChildNodes()) show('Nothing rendered after 4s — React never mounted, no error was thrown. Likely a network/script-loading failure.');
+        }, 4000);
+      })();
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

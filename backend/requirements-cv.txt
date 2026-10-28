@@ -1,0 +1,10 @@
+# Optional, heavy dependencies for the real open-source CV biometric provider
+# (app/biometrics/opensource_cv.py). Not in requirements.txt so the base app
+# stays light when BIOMETRIC_PROVIDER_KEY=mock (the default). Install with:
+#   pip install -r requirements-cv.txt
+-r requirements.txt
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.1+cpu
+insightface==0.7.3
+onnxruntime==1.19.2
+opencv-python-headless==4.10.0.84

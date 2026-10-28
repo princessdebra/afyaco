@@ -1,0 +1,16 @@
+# Frontend
+afyaco/node_modules/
+afyaco/dist/
+afyaco/.env
+afyaco/*.tar.gz
+
+# Backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.env
+
+# Editor/OS
+.DS_Store
+Thumbs.db
